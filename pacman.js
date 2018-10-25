@@ -1,7 +1,7 @@
 // Setup initial game stats
 var score = 0;
 var lives = 2;
-
+var powerPellets = 4;
 
 // Define your ghosts here
 var inky = {
@@ -55,6 +55,7 @@ function drawScreen() {
   clearScreen();
   setTimeout(function() {
     displayStats();
+    displayPowerPellets();
     displayMenu();
     displayPrompt();
     check_lives();
@@ -69,13 +70,20 @@ function displayStats() {
   console.log('Score: ' + score + '     Lives: ' + lives);
 }
 
+function displayPowerPellets(){
+  console.log('Power Pellets: ' + powerPellets);
+}
+
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
-  console.log('(1) Eat Inky');
-  console.log('(2) Eat Blinky');
-  console.log('(3) Eat Pinky');
-  console.log('(4) Eat Clyde');
+  if(powerPellets > 0){
+    console.log('(p) Eat Power-Pellet');
+  }
+  console.log('(1) Eat Inky ('+displayEdible(inky)+")");
+  console.log('(2) Eat Blinky ('+displayEdible(blinky)+")");
+  console.log('(3) Eat Pinky ('+displayEdible(pinky)+")");
+  console.log('(4) Eat Clyde ('+displayEdible(clyde)+")");
   console.log('(q) Quit');
 
 }
@@ -83,6 +91,14 @@ function displayMenu() {
 function displayPrompt() {
   // process.stdout.write is similar to console.log except it doesn't add a new line after the text
   process.stdout.write('\nWaka Waka :v '); // :v is the Pac-Man emoji.
+}
+
+function displayEdible(ghost){
+  if (ghost.edible == true){
+    return "edible"
+  }else{
+    return "inedible"
+  }
 }
 
 
@@ -96,10 +112,23 @@ function eatGhost(ghost){
 
   if(ghost.edible){
     console.log(`\nChomp! ${ghost.name} Nom`);
-    score += 10;
+    score += 200;
+    ghost.edible = false //toggle edible
   }else{
     lives -= 1;
     console.log(`\n${ghost.name} killed pacman :(`);
+  }
+}
+
+function eatPowerPellet(){
+  if(powerPellets == 0){
+    console.log('\nNo Moar Pellets!!');
+  }else{
+    powerPellets -= 1;
+    score += 50;
+    ghosts.forEach(function(ghost){
+      ghost.edible = true //toggle edible
+    });
   }
 
 }
@@ -115,6 +144,9 @@ function processInput(key) {
       break;
     case 'd':
       eatDot();
+      break;
+    case 'p':
+      eatPowerPellet();
       break;
     case '1':
       eatGhost(ghosts[0]);
