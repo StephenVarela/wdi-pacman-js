@@ -40,9 +40,15 @@ var clyde = {
 }
 
 
+var ghosts = [inky, blinky, pinky, clyde]
 
-// replace this comment with your four ghosts setup as objects
 
+function check_lives(){
+  if(lives < 0){
+    clearScreen();
+    process.exit();
+  }
+}
 
 // Draw the screen functionality
 function drawScreen() {
@@ -51,6 +57,7 @@ function drawScreen() {
     displayStats();
     displayMenu();
     displayPrompt();
+    check_lives();
   }, 10);
 }
 
@@ -65,7 +72,12 @@ function displayStats() {
 function displayMenu() {
   console.log('\n\nSelect Option:\n');  // each \n creates a new line
   console.log('(d) Eat Dot');
+  console.log('(1) Eat Inky');
+  console.log('(2) Eat Blinky');
+  console.log('(3) Eat Pinky');
+  console.log('(4) Eat Clyde');
   console.log('(q) Quit');
+
 }
 
 function displayPrompt() {
@@ -80,16 +92,41 @@ function eatDot() {
   score += 10;
 }
 
+function eatGhost(ghost){
+
+  if(ghost.edible){
+    console.log(`\nChomp! ${ghost.name} Nom`);
+    score += 10;
+  }else{
+    lives -= 1;
+    console.log(`\n${ghost.name} killed pacman :(`);
+  }
+
+}
+
 
 // Process Player's Input
 function processInput(key) {
   switch(key) {
     case '\u0003': // This makes it so CTRL-C will quit the program
     case 'q':
+      clearScreen();
       process.exit();
       break;
     case 'd':
       eatDot();
+      break;
+    case '1':
+      eatGhost(ghosts[0]);
+      break;
+    case '2':
+      eatGhost(ghosts[1]);
+      break;
+    case '3':
+      eatGhost(ghosts[2]);
+      break;
+    case '4':
+      eatGhost(ghosts[3]);
       break;
     default:
       console.log('\nInvalid Command!');
